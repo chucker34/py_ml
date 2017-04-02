@@ -1,18 +1,22 @@
-FROM ubuntu:16.04
+FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+  bzip2 \
   git \
-  wget \
-  bzip2
+  wget
 
-ADD .bash_profile $HOME
+# install python
 RUN git clone https://github.com/yyuu/pyenv.git $HOME/.pyenv
-RUN echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
-RUN echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
-RUN echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
-RUN source ~/.bashrc
-RUN pyenv install anaconda3-4.3.1
-RUN pyenv global anaconda3-4.3.1
-RUN source ~/.bashrc
+RUN git clone https://github.com/yyuu/pyenv-pip-rehash.git /root/.pyenv/plugins/pyenv-pip-rehash
+ENV PYENV_ROOT /root/.pyenv
+ENV PATH $PYENV_ROOT/bin:$PATH
+RUN echo 'eval "$(pyenv init -)"' >> .bashrc
+ENV ANACONDA_VER 4.3.1
+RUN pyenv install anaconda3-$ANACONDA_VER
+RUN pyenv global anaconda3-$ANACONDA_VER
+ENV PATH $PYENV_ROOT/versions/anaconda3-$ANACONDA_VER/bin:$PATH
+
+# install python package
 RUN conda update -y conda
 RUN pip install --upgrade pip
+RUN conda install -y NumPy SciPy scikit-learn matplotlib pandas

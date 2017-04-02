@@ -14,3 +14,5 @@ RUN source ~/.bashrc
 RUN pyenv install anaconda3-4.3.1
 RUN pyenv global anaconda3-4.3.1
 RUN source ~/.bashrc
+RUN conda update -y conda
+RUN pip install --upgrade pip
